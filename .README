@@ -1,0 +1,165 @@
+## Folder structure:
+
+### /app
+- Container for routing system
+- router is based on filesysytem
+
+### /app/layout.tsx
+
+- common layout for pages
+- <body className={inter.className}>{children}</body> children is replaced 
+  by pages dynaimcally at runtime depending on where the user is in app
+
+### /app/page.tsx
+- represent home page
+
+
+## ROUTING
+<Link href="/users">Users Link</Link>
+
+## RENDERING
+
+- Client Side: 
+    - Large bundles
+    - Resourse intensive
+    - no seo
+    - less secure
+- Server side rendering
+    - smaller bundles
+    - resource efficient
+    - SEO
+    - More Secure 
+    - cannot listen to browser events
+    - cannot access browser apis
+    - cannogt maintain state
+    - cannot use effects
+
+
+In nextjs all all components in /app folders are server components by default
+mark a component as client rendered: *'use client'*
+
+
+## FETCHING DATA
+ - Client Side
+    - useState() + useEffect()
+    - ReactQuery
+ - Server Side
+ - await fetch(<url>, {cache: 'no store'}) disable caching
+  - await fetch(<url>, {next: {revalidate: 10}) every 10sec
+  
+## RENDERING
+- STATIC rendering (rendering at build time) from cache based on file sytem
+- dynamic rendering (rendering at request time)
+
+## CSS MODULE
+- A css file file that is scoped to a component/page
+- <name>.module.css (use camelcase name for styles)
+- import styles from '<filename>'
+   <div className={styles.<className>}></div>
+ - postcss tranform classs names to unique ones that dont class
+
+ ## Special files
+
+ - page.tsx (only this is publicly avaioable)
+ - layout.tsx
+ - loading.tsx // coponent to render when a  page is being rendered
+ - route.tsx
+ - not-found.tsx
+ - error.tsx
+
+ ## dynamic routing
+
+ ---[id]
+ -------page.tsx
+ ---------[photoId]
+ ----------- page.tsx
+ interface  Props {
+    params: {id: number, photoId: number}
+ }
+ 
+ const UserDetailPage = ({params: {id}}: props) =>{
+    return <h1>{id}</h1>
+ }
+
+ above only works in pages.tsx
+
+ ## Catch all segments http//localhost:3000/products/grocery/diary/milk
+
+--[...slug] //aray of strings
+----page.tsx
+
+--[[...slug]] (optional)
+----page.tsx
+
+## Accessing qury string parameters
+```
+interface Props {
+    params: {slug: string[]};
+    searchParams: {sortOrder: string}
+}
+
+const ProductPage = ({params: {slug}, searchParams: {sortOrder:}})
+```
+```
+@layer base{
+    h1{
+        @apply font-extrabold text-2xl mb-3;
+    }
+}
+```
+
+## Link
+- only download the content of current pafe
+- prefetches links in the view port
+- caches pages on client caches
+
+
+## programatic navigation
+
+useRouter //import from nextjs not from react
+onClick={()=> router.push(''/users)}
+
+## show loading
+<Suspense fallback={<p>...Loading</p>}>
+<UserTable sortOrder={sortOrder}></UserTable>
+</Suspense>
+
+# handling not found errors
+not-found.tsx
+
+if(id > 10) notFound();
+
+## handling unexpected error
+
+error.tsx // 'use client'
+interface Props {
+    error: Error;
+    reset: ()=> void
+}
+global-error.tsx
+
+## api
+
+--api
+----users
+------route.tsx (not a Page.tsx) suitable for http request
+------[id]
+----------route.tsx
+
+http://<baseurl>/api/users
+// addd "request: NextRequest" to prevent cacching
+export function GET(request: NextRequest){
+    return NextRespone.json('hello')
+}
+
+-returning error
+return NextResponse.json({error: 'User not found'}, {status: 404});
+
+export async function POST(request: NextRequest){
+   const body = await request.json();
+}
+
+## validation with zod
+
+## upload files
+
